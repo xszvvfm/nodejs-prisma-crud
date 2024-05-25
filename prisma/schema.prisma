@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // MySQL 데이터베이스 엔진을 사용합니다.
+  provider = "mysql"
+  // 데이터베이스 연결 정보를 .env 파일의 DATABASE_URL 로부터 읽어옵니다.
+  url      = env("DATABASE_URL")
+}
+
+// Products 라는 해당 테이블을 정의
+model Products {
+  // @id : PRIMARY KEY 를 나타냄 / @unique : 제약 조건
+  // @default : 기본 값. 아무런 데이터가 들어오지 않았을 때 어떤 값을 할당할 것인지
+  // @db.Text : String 타입이나, 실제 DB에서는 Text라는 데이터 타입 사용
+  // 좌측의 productId 는 JS에서의 key 값 & 우측의 @map("productId") 는 DB에 생성될 컬럼명
+  // 데이터 유형 뒤에 `?`가 붙으면, NULL을 허용하는 컬럼
+  productId   Int     @id @default(autoincrement()) @map("productId")
+  productName String  @unique @map("productName")
+  price       Int     @default(1000) @map("price")
+  info        String? @map("info") @db.Text
+
+  // @updateAt : 이 테이블의 데이터가 수정될 경우, 자동으로 updateAt에 있는 컬럼 값을 반영해 줌 (prisma 제공)
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  // @@map 작성하지 않으면, 테이블명의 대문자는 전부 소문자로 치환됨
+  @@map("Products")
+}
+
+model Posts {
+  postId Int @id @default(autoincrement()) @map("postId")
+  title String @map("title")
+  content String @map("content") @db.Text
+  password String @map("password")
+
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  @@map("Posts")
+}
